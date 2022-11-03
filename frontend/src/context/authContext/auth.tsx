@@ -17,6 +17,7 @@ export type User = ILoginInput & ISignupInput;
 interface IAuthContextProps {
   login: (data: ILoginInput) => User | null;
   signup: (data: ISignupInput) => User | null;
+  getCurrentUser: () => User | null;
 }
 
 interface IAuthContextProviderProps {
@@ -76,7 +77,8 @@ const AuthProvider = ({ children }: IAuthContextProviderProps) => {
 
   const value = {
     login,
-    signup
+    signup,
+    getCurrentUser
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

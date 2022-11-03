@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Login, Signup } from './components/pages';
+import { Login, Profile, Signup } from './components/pages';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 function App() {
@@ -16,6 +16,10 @@ function App() {
     {
       path: '/signup',
       element: <Signup />
+    },
+    {
+      path: '/profile',
+      element: <Profile />
     }
   ]);
 
