@@ -1,19 +1,34 @@
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { GoogleIcon } from '../icons';
 import { InputForm } from '../common';
-
-interface ISignupInput {
-  firstname: string;
-  lastname: string;
-  email: string;
-  password: string;
-}
+import { useNavigate } from 'react-router-dom';
+import { ISignupInput, useAuthContext } from '../../context/authContext';
+import { toast } from 'react-toastify';
 
 const Signup = () => {
+  const navigate = useNavigate();
+  const { signup } = useAuthContext();
   const { register, handleSubmit, formState } = useForm<ISignupInput>();
   const { errors } = formState;
-  const onSubmit: SubmitHandler<ISignupInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<ISignupInput> = (data) => {
+    try {
+      const user = signup(data);
+      if (user) {
+        navigate('/home');
+      }
+    } catch (e) {
+      toast.error((e as any).message || 'Error creating the user', {
+        position: 'bottom-center',
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: 'light'
+      });
+    }
+  };
 
   return (
     <div className="flex w-full h-screen">
@@ -67,7 +82,7 @@ const Signup = () => {
             <div className="mt-8 flex justify-center items-center">
               <p className="font-medium text-base">Already have an account?</p>
               <button
-                onClick={() => console.log('register')}
+                onClick={() => navigate('/login')}
                 className="ml-2 f ont-medium text-base text-[#48D398]"
               >
                 Sign in

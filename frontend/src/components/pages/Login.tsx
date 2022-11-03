@@ -2,16 +2,33 @@ import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { GoogleIcon } from '../icons';
 import { InputForm } from '../common';
-
-interface ILoginInput {
-  email: string;
-  password: string;
-}
+import { useNavigate } from 'react-router-dom';
+import { ILoginInput, useAuthContext } from '../../context/authContext';
+import { toast } from 'react-toastify';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useAuthContext();
   const { register, handleSubmit, formState } = useForm<ILoginInput>();
   const { errors } = formState;
-  const onSubmit: SubmitHandler<ILoginInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<ILoginInput> = (data) => {
+    const user = login(data);
+    if (user) {
+      navigate('/home');
+      return;
+    }
+
+    toast.error('Invalid credentials', {
+      position: 'bottom-center',
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    });
+  };
 
   return (
     <div className="flex w-full h-screen">
@@ -73,7 +90,7 @@ const Login = () => {
             <div className="mt-8 flex justify-center items-center">
               <p className="font-medium text-base">Don't have an account?</p>
               <button
-                onClick={() => console.log('register')}
+                onClick={() => navigate('/signup')}
                 className="ml-2 f ont-medium text-base text-[#48D398]"
               >
                 Sign up
