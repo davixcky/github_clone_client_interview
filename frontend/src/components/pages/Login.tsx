@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { GoogleIcon } from '../icons';
 import { InputForm } from '../common';
+import { useNavigate } from 'react-router-dom';
 
 interface ILoginInput {
   email: string;
@@ -9,6 +10,7 @@ interface ILoginInput {
 }
 
 const Login = () => {
+  const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm<ILoginInput>();
   const { errors } = formState;
   const onSubmit: SubmitHandler<ILoginInput> = (data) => console.log(data);
@@ -73,7 +75,7 @@ const Login = () => {
             <div className="mt-8 flex justify-center items-center">
               <p className="font-medium text-base">Don't have an account?</p>
               <button
-                onClick={() => console.log('register')}
+                onClick={() => navigate('/signup')}
                 className="ml-2 f ont-medium text-base text-[#48D398]"
               >
                 Sign up

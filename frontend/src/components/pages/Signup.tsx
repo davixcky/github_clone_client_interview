@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { GoogleIcon } from '../icons';
 import { InputForm } from '../common';
+import { useNavigate } from 'react-router-dom';
 
 interface ISignupInput {
   firstname: string;
@@ -11,6 +11,7 @@ interface ISignupInput {
 }
 
 const Signup = () => {
+  const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm<ISignupInput>();
   const { errors } = formState;
   const onSubmit: SubmitHandler<ISignupInput> = (data) => console.log(data);
@@ -67,7 +68,7 @@ const Signup = () => {
             <div className="mt-8 flex justify-center items-center">
               <p className="font-medium text-base">Already have an account?</p>
               <button
-                onClick={() => console.log('register')}
+                onClick={() => navigate('/login')}
                 className="ml-2 f ont-medium text-base text-[#48D398]"
               >
                 Sign in
