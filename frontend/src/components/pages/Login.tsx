@@ -2,17 +2,18 @@ import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { GoogleIcon } from '../icons';
 import { InputForm } from '../common';
-import { useNavigate } from 'react-router-dom';
-import { ILoginInput, useAuthContext } from '../../context/authContext';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../context/authContext';
 import { toast } from 'react-toastify';
+import { LoginData } from '../../services/authService';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuthContext();
-  const { register, handleSubmit, formState } = useForm<ILoginInput>();
+  const { login, getCurrentUser } = useAuthContext();
+  const { register, handleSubmit, formState } = useForm<LoginData>();
   const { errors } = formState;
-  const onSubmit: SubmitHandler<ILoginInput> = (data) => {
-    const user = login(data);
+  const onSubmit: SubmitHandler<LoginData> = async (data) => {
+    const user = await login(data);
     if (user) {
       navigate('/home');
       return;
@@ -29,6 +30,11 @@ const Login = () => {
       theme: 'light'
     });
   };
+
+  const user = getCurrentUser();
+  if (user) {
+    return <Navigate to="/home" replace />;
+  }
 
   return (
     <div className="flex w-full h-screen">
@@ -61,7 +67,7 @@ const Login = () => {
                 registerAlias="password"
                 register={register}
                 required
-                minLength={{ value: 8, message: 'Please enter at least 8 chars' }}
+                minLength={{ value: 1, message: 'Please enter at least 1 chars' }}
                 type={'password'}
               />
               {errors.password && <p className="text-red-600 pt-1">{errors.password.message}</p>}

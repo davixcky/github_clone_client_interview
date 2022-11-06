@@ -1,5 +1,8 @@
 import { useAuthContext } from '../../context/authContext';
-import {Navigate} from "react-router-dom";
+import { Navigate, useNavigate } from 'react-router-dom';
+import { Header } from '../common';
+import { GitHubIcon, PlusIcon } from '../icons';
+import { GithubAuthServiceInstanceController } from '../../services';
 
 const Profile = () => {
   const { getCurrentUser } = useAuthContext();
@@ -9,48 +12,40 @@ const Profile = () => {
     return <Navigate to="/" replace />;
   }
 
-  return (
-    <section className=" bg-white flex font-medium items-center justify-center h-screen">
-      <section className="bg-[#48D398]/50 rounded-2xl px-8 py-6 shadow-lg">
-        <div className="flex items-center justify-between">
-          <span className="text-emerald-400">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-              />
-            </svg>
-          </span>
-        </div>
-        <div className="mt-6 w-fit mx-auto">
-          <img
-            src="https://api.lorem.space/image/face?w=120&h=120&hash=bart89fe"
-            className="rounded-full w-28 "
-            alt="profile picture"
-            srcSet=""
-          />
-        </div>
+  const handleSyncRequest = async () => {
+    const res = await GithubAuthServiceInstanceController.requestLoginUrl();
+    window.location.replace(res.data.redirect_url);
+  };
 
-        <div className="mt-8 px-10">
-          <h2 className="text-white font-bold text-2xl tracking-wide">
+  return (
+    <div className="bg-gradient-to-r from-green-400 to-blue-500 w-screen h-screen flex p-10 flex-col">
+      <Header mainButtonHref="/home" mainButtonTitle="Favorites" />
+      <div className="flex flex-col flex-1 mt-9 px-4 capitalize">
+        <p className="text-white text-3xl mb-2">My profile</p>
+        <p className="font-semibold mx-3 text-gray-500">
+          Full name{' '}
+          <span className="font-bold text-2xl text-white">
             {user.firstname + ' ' + user.lastname}
-          </h2>
+          </span>
+        </p>
+        <p className="font-semibold mx-3 text-gray-500">
+          Email <span className="font-bold text-2xl text-white">{user.email}</span>
+        </p>
+        <div className="flex flex-col flex-wrap mt-10">
+          <p className="text-white text-3xl mb-2">Extra account</p>
+          <button
+            onClick={handleSyncRequest}
+            className="rounded-xl py-4 hover:bg-indigo-300 drop-shadow-2xl flex gap-3 bg-white text-green-300 text-2xl font-semibold justify-center items-center"
+          >
+            Sync with Github Account
+            <div className="w-[20px] h-[20px]">
+              {' '}
+              <GitHubIcon />
+            </div>
+          </button>
         </div>
-        <p className="text-white font-semibold mt-2.5">Active</p>
-        <p className="text-white font-semibold mt-2.5 underline cursor-pointer">{ user.email}</p>
-      </section>
-      <button>
-        See repositories
-      </button>
-    </section>
+      </div>
+    </div>
   );
 };
 
