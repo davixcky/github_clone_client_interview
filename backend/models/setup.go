@@ -2,25 +2,19 @@ package models
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/driver/sqlite" // Sqlite driver based on GGO
+	// "github.com/glebarez/sqlite" // Pure go SQLite driver, checkout https://github.com/glebarez/sqlite for details
+	"gorm.io/gorm"
 	"log"
-	"os"
+	// "github.com/glebarez/sqlite" // Pure go SQLite driver, checkout https://github.com/glebarez/sqlite for details
 )
 
 var DB *gorm.DB
 
 func ConnectDatabase() {
 	var err error
-	DbHost := os.Getenv("DB_HOST")
-	DbUser := os.Getenv("DB_USER")
-	DbPassword := os.Getenv("DB_PASSWORD")
-	DbName := os.Getenv("DB_NAME")
-	DbPort := os.Getenv("DB_PORT")
 
-	DBURL := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=America/Bogota", DbHost, DbUser, DbPassword, DbName, DbPort)
-
-	DB, err = gorm.Open("postgres", DBURL)
+	DB, err = gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{})
 
 	if err != nil {
 		fmt.Println("Cannot connect to database")

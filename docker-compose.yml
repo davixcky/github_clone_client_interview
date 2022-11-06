@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: hellobuild-github-clone
+    build: ./frontend
+    ports:
+      - "3000:3000"
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=hellobuild
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+  api:
+    container_name: hellobuild-api-serve
+    build: ./backend
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      - DB_PORT=5433
+      - DB_PASSWORD=postgres
+      - DB_USER=postgres
+      - DB_NAME=hellobuild
+      - DB_HOST=localhost
+      - API_SECRET=hellobuildsecrettoken
+      - TOKEN_HOUR_LIFESPAN=24
+      - CLIENT_ID=a07f590d8cfc8b1a52e9
+      - CLIENT_SECRET=d7159bcd6779787e9ea422aa3ea5514ad32cffb9
