@@ -51,7 +51,7 @@ const AuthProvider = ({ children }: IAuthContextProviderProps) => {
       localStorage.setItem('hellobuild_current_user', JSON.stringify(res.data));
       return res.data;
     } catch (e) {
-      return null;
+      throw new Error((e as any)?.response?.data?.error || 'Unexpected error');
     }
   };
 

@@ -64,7 +64,7 @@ const Home = () => {
               (repo, index) =>
                 favorites.includes((repo as any).name) && (
                   <RepositoryCard
-                      key={index}
+                    key={index}
                     onFavoriteChange={handleOnChangeFavorite}
                     description={(repo as any).description || ''}
                     name={(repo as any).name}
@@ -81,7 +81,7 @@ const Home = () => {
         <div className="flex flex-wrap gap-5">
           {repos.map((repo, index) => (
             <RepositoryCard
-                key={index}
+              key={index}
               onFavoriteChange={handleOnChangeFavorite}
               description={(repo as any).description || ''}
               name={(repo as any).name}

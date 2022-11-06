@@ -58,7 +58,7 @@ func LoginCheck(email string, password string) (string, error) {
 		return "", err
 	}
 
-	token, err := tokens.GenerateToken(u.Model.ID)
+	token, err := tokens.GenerateToken(u.ID)
 
 	if err != nil {
 		return "", err
