@@ -1,23 +1,16 @@
 import { createContext, ReactElement, useContext } from 'react';
-
-export interface ILoginInput {
-  email: string;
-  password: string;
-}
-
-export interface ISignupInput {
-  firstname: string;
-  lastname: string;
-  email: string;
-  password: string;
-}
-
-export type User = ILoginInput & ISignupInput;
+import {
+  AuthServiceInstanceController,
+  LoginData,
+  RegisterData,
+  UserData
+} from '../../services/authService';
 
 interface IAuthContextProps {
-  login: (data: ILoginInput) => User | null;
-  signup: (data: ISignupInput) => User | null;
-  getCurrentUser: () => User | null;
+  login: (data: LoginData) => Promise<UserData | null>;
+  signup: (data: RegisterData) => Promise<UserData | null>;
+  getCurrentUser: () => UserData | null;
+  logout: () => void;
 }
 
 interface IAuthContextProviderProps {
@@ -27,57 +20,45 @@ interface IAuthContextProviderProps {
 const AuthContext = createContext<IAuthContextProps>({} as IAuthContextProps);
 
 const AuthProvider = ({ children }: IAuthContextProviderProps) => {
-  const getUsers = (): Array<any> | null => {
-    const rawUsers = localStorage.getItem('users');
-    if (!rawUsers) return null;
-
-    const users = JSON.parse(rawUsers);
-    if (!Array.isArray(users)) return null;
-
-    return users;
+  const logout = () => {
+    localStorage.removeItem('hellobuild_current_user');
+    localStorage.removeItem('hellobuild_access_token');
   };
 
-  const getCurrentUser = (): User | null => {
-    const rawUser = localStorage.getItem('current_user');
+  const getCurrentUser = (): UserData | null => {
+    const rawUser = localStorage.getItem('hellobuild_current_user');
     if (!rawUser) return null;
 
     return JSON.parse(rawUser);
   };
 
-  const saveCurrentUser = (data: User) => {
-    localStorage.setItem('current_user', JSON.stringify(data));
-  };
+  const login = async (data: LoginData): Promise<UserData | null> => {
+    try {
+      const res = await AuthServiceInstanceController.login(data);
+      localStorage.setItem('hellobuild_access_token', res.data.token);
 
-  const login = (data: ILoginInput): User | null => {
-    const users = getUsers();
-    if (!users) return null;
-
-    const user = users.find((u) => data.email === u.email && data.password === u.password);
-    if (!user) return null;
-
-    saveCurrentUser(user);
-    return user;
-  };
-
-  const signup = (data: ISignupInput): User | null => {
-    const users = getUsers();
-    if (users) {
-      const userExists = users.find((u) => u.email === data.email);
-      if (userExists) {
-        throw new Error('A user with the same email already exists');
-      }
+      const userData = await AuthServiceInstanceController.userInfo(res.data.token);
+      localStorage.setItem('hellobuild_current_user', JSON.stringify(userData.data));
+      return userData.data;
+    } catch (e) {
+      return null;
     }
+  };
 
-    const rawUsers = [data];
-    const jsonUsers = JSON.stringify(rawUsers);
-    saveCurrentUser(data);
-    localStorage.setItem('users', jsonUsers);
-    return data;
+  const signup = async (data: RegisterData): Promise<UserData | null> => {
+    try {
+      const res = await AuthServiceInstanceController.signup(data);
+      localStorage.setItem('hellobuild_current_user', JSON.stringify(res.data));
+      return res.data;
+    } catch (e) {
+      return null;
+    }
   };
 
   const value = {
     login,
     signup,
+    logout,
     getCurrentUser
   };
 

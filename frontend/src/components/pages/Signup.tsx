@@ -1,18 +1,19 @@
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { InputForm } from '../common';
-import { useNavigate } from 'react-router-dom';
-import { ISignupInput, useAuthContext } from '../../context/authContext';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../context/authContext';
 import { toast } from 'react-toastify';
+import { RegisterData } from '../../services/authService';
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { signup } = useAuthContext();
-  const { register, handleSubmit, formState } = useForm<ISignupInput>();
+  const { signup, getCurrentUser } = useAuthContext();
+  const { register, handleSubmit, formState } = useForm<RegisterData>();
   const { errors } = formState;
-  const onSubmit: SubmitHandler<ISignupInput> = (data) => {
+  const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     try {
-      const user = signup(data);
+      const user = await signup(data);
       if (user) {
         navigate('/home');
       }
@@ -29,6 +30,11 @@ const Signup = () => {
       });
     }
   };
+
+  const user = getCurrentUser();
+  if (user) {
+    return <Navigate to="/home" replace />;
+  }
 
   return (
     <div className="flex w-full h-screen">
