@@ -6,17 +6,6 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
-  db:
-    image: postgres:latest
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=hellobuild
-    ports:
-      - '5433:5432'
-    volumes:
-      - ./pg_data:/var/lib/postgresql/data
   api:
     container_name: hellobuild-api-serve
     build: ./backend
@@ -25,8 +14,6 @@ services:
       - "8080:8080"
     volumes:
       - .:/app
-    depends_on:
-      - db
     environment:
       - DB_PORT=5433
       - DB_PASSWORD=postgres
